@@ -26,7 +26,7 @@ public class ApiResponse <T>{
 
     /**
      * the requestId of the request that served by this response
-     * @See ApiRequest.getSource();
+     * @See ApiRequest.getRequestId();
      */
     private String requestId;
 

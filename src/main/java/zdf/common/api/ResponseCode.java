@@ -20,7 +20,12 @@ public enum ResponseCode implements IBaseEnum{
      * Unknown error happened, like network\hardware failures
      * It's not the end state, so you had better query or retry.
      */
-    UNKNOWN("UN","unknown error")
+    UNKNOWN("UN","unknown error"),
+
+    /**
+     * The request is fail because of the input format validation fail.
+     */
+    INVALID_FORMAT("INVALID_FORMAT","input validation fail")
     ;
 
     private String code;

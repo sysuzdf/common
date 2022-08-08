@@ -18,11 +18,14 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.UUID;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.util.*;
 
 /**
  * wrap logback
+ *
+ * Should expose a LogTool object as @Bean in SpringBoot's @Configuration class
  */
 @Aspect
 public class LogTool {
@@ -41,6 +44,8 @@ public class LogTool {
     public static void endTrace(){
         MDC.remove(LOG_ID);
     }
+
+    private static List<String> localIps=getLocalIpList();
 
     /**
      * Provides log trace (MDC) setting \ ApiRequest format validation for (api entry layer) method annotated by @LogTrace
@@ -108,13 +113,14 @@ public class LogTool {
             }
         }
         finally {
+            logger.info("class:{} method:{} end, time used : {}",jPoint.getTarget().getClass().getName(),
+                    jPoint.getSignature().getName(),System.currentTimeMillis()-startMills);
             if(logStarter){
                 //before return from the advice, the starter should clean the MDC
                 //because thread could be reused, but new logid should be set for the next starter
                 endTrace();
             }
-            logger.info("class:{} method:{} end, time used : {}",jPoint.getTarget().getClass().getName(),
-                    jPoint.getSignature().getName(),System.currentTimeMillis()-startMills);
+
         }
         return result;
     }
@@ -192,5 +198,35 @@ public class LogTool {
             logger.error("getErrorStackAsString fail",ex);
         }
         return "";
+    }
+
+    public static List<String> getLocalIpList(){
+        List<String> ipList=new ArrayList<String>();
+        InetAddress[] addrList;
+        try{
+            Enumeration<NetworkInterface> intfs= NetworkInterface.getNetworkInterfaces();
+            while (intfs.hasMoreElements()){
+                NetworkInterface ni=intfs.nextElement();
+                Enumeration<InetAddress> ipEnum=ni.getInetAddresses();
+                while (ipEnum.hasMoreElements()){
+                    InetAddress addr=ipEnum.nextElement();
+                    if(addr.isLoopbackAddress()){
+                        continue;
+                    }
+                    String ip=addr.getHostAddress();
+                    ipList.add(ip);
+                }
+            }
+        }catch (Exception ex){
+            logger.error("error in getLocalIpList",ex);
+        }
+        return ipList;
+    }
+
+    /**
+     * if change the ip address while program is running,should call this
+     */
+    public static void refreshLocalIpList(){
+        localIps=getLocalIpList();
     }
 }

@@ -1,5 +1,8 @@
 package zdf.common.api;
 
+import zdf.common.utils.log.LogTool;
+
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -43,7 +46,7 @@ public class ApiResponse <T>{
     /**
      * help to identify which host sent the response
      */
-    private String host;
+    private List<String> hosts= LogTool.getLocalIpList();
 
     /**
      * the response code
@@ -108,12 +111,12 @@ public class ApiResponse <T>{
         this.provider = provider;
     }
 
-    public String getHost() {
-        return host;
+    public List<String> getHosts() {
+        return hosts;
     }
 
-    public void setHost(String host) {
-        this.host = host;
+    public void setHosts(List<String> hosts) {
+        this.hosts = hosts;
     }
 
     public ResponseCode getCode() {

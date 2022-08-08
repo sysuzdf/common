@@ -1,5 +1,6 @@
 package zdf.common.utils.validation;
 
+import javax.validation.Payload;
 import java.lang.annotation.*;
 
 /**
@@ -12,4 +13,10 @@ public @interface NestObj {
     String message() default "Nested object validate fails";
 
     boolean nullable() default false;
+
+    /**
+     * javax validation need this
+     * @return
+     */
+    Class<? extends Payload>[] payload() default {};
 }

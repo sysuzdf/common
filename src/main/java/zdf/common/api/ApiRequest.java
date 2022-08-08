@@ -1,5 +1,8 @@
 package zdf.common.api;
 
+import zdf.common.utils.log.LogTool;
+
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -32,7 +35,7 @@ public class ApiRequest<T> {
     /**
      * help to identify which host sent the request
      */
-    private String host;
+    private List<String> hosts= LogTool.getLocalIpList();
 
     public T getBody() {
         return body;
@@ -57,12 +60,12 @@ public class ApiRequest<T> {
     public void setSource(String source) {
         this.source = source;
     }
-    public String getHost() {
-        return host;
+    public List<String> getHosts() {
+        return hosts;
     }
 
-    public void setHost(String host) {
-        this.host = host;
+    public void setHosts(List<String> hosts) {
+        this.hosts = hosts;
     }
 
     public String getVersion() {
